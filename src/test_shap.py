@@ -9,7 +9,9 @@ from preprocessing import(
     build_preprocessor
 )
 from model import train_xgboost
-from shap_utils import create_shap_explainer, explain_single_customer
+from shap_utils import create_shap_explainer, explain_single_customer, get_top_features
+from recommendation_engine import generate_precautions
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = PROJECT_ROOT / "data" / "raw" / "telco_churn.csv"
@@ -38,5 +40,20 @@ single_shap = explain_single_customer(
     single_customer
 )
 
-print("Showing explanation for one customer...")
-shap.waterfall_plot(single_shap[0])
+feature_names = xgb_pipeline.named_steps["preprocessor"].get_feature_names_out()
+
+top_risk_features = get_top_features(
+    single_shap,
+    feature_names,
+    top_n=3
+)
+
+precautions = generate_precautions(top_risk_features)
+
+print("\nTop Risk Drivers:")
+for f in top_risk_features:
+    print("-", f)
+
+print("\nRecommended Precautions:")
+for p in precautions:
+    print("-", p)

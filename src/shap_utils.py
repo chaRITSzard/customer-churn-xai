@@ -25,3 +25,15 @@ def explain_single_customer(trained_pipeine, explainer, X_customer):
     X_processed = preprocessor.transform(X_customer)
     shap_values = explainer(X_processed)
     return shap_values
+
+
+def get_top_features(shap_values, feature_names, top_n = 3):
+    shap_array = shap_values.values[0]
+    feature_contri = list(zip(feature_names, shap_array))
+
+    positive_feats = [
+        (feat, val) for feat, val in feature_contri if val > 0
+    ]
+    positive_feats.sort(key=lambda x: x[1], reverse=True)
+
+    return [f[0] for f in positive_feats[:top_n]]
