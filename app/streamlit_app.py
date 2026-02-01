@@ -17,3 +17,5 @@ from src.shap_utils import (
 )
 
 from src.recommendation_engine import generate_precautions
+
+print("Day 3")
