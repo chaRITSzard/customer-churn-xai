@@ -1,22 +1,28 @@
 import streamlit as st
 import pandas as pd
+import sys
 from pathlib import Path
+import shap
 
-from src.preprocessing import (
+sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
+
+from preprocessing import (
     load_data,
     clean_data,
     get_train_test_data,
     build_preprocessor
 )
 
-from src.model import train_xgboost
-from src.shap_utils import (
+from model import train_xgboost
+from shap_utils import (
     create_shap_explainer,
     explain_single_customer,
     get_top_features
 )
 
-from src.recommendation_engine import generate_precautions
+from recommendation_engine import generate_precautions
+
+import matplotlib.pyplot as plt
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = PROJECT_ROOT / "data" / "raw" / "telco_churn.csv"
@@ -62,9 +68,11 @@ top_risk_features = get_top_features(
 
 precautions = generate_precautions(top_risk_features)
 
-st.subheader("Top Risk Drivers")
-for f in top_risk_features:
-    st.write(f"- {f}")
+st.subheader("Why this customer may churn")
+
+fig, ax = plt.subplots()
+shap.waterfall_plot(single_shap[0], show=False)
+st.pyplot(fig)
 
 st.subheader("Recommended Precautions")
 for p in precautions:
