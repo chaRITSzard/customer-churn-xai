@@ -6,6 +6,8 @@ import shap
 
 sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
+from recommendation_engine import generate_precautions, translate_features
+
 from preprocessing import (
     load_data,
     clean_data,
@@ -19,8 +21,6 @@ from shap_utils import (
     explain_single_customer,
     get_top_features
 )
-
-from recommendation_engine import generate_precautions
 
 import matplotlib.pyplot as plt
 
@@ -69,6 +69,10 @@ top_risk_features = get_top_features(
 precautions = generate_precautions(top_risk_features)
 
 st.subheader("Why this customer may churn")
+readable_reasons = translate_features(top_risk_features)
+
+for r in readable_reasons:
+    st.write(f"- {r}")
 
 fig, ax = plt.subplots()
 shap.waterfall_plot(single_shap[0], show=False)

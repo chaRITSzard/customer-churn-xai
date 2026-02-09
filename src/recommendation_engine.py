@@ -1,4 +1,26 @@
+FEATURE_NAME_MAPPING = {
+        "cat__InternetService_Fiber optic": "Uses Fiber Optic internet service",
+        "cat__MultipleLines_No": "Has only one phone line",
+        "cat__StreamingMovies_Yes": "Subscribes to streaming services",
+        "cat__Contract_Month-to-month": "On month-to-month contract",
+        "cat__TechSupport_No": "Does not have tech support",
+        "cat__OnlineSecurity_No": "Does not have online security",
+        "num__MonthlyCharges": "High monthly charges",
+        "num__tenure": "Short customer tenure"
+    }
+
+def translate_features(feature_list):
+    readable = []
+
+    for f in feature_list:
+        if f in FEATURE_NAME_MAPPING:
+            readable.append(FEATURE_NAME_MAPPING[f])
+        else:
+            readable.append("Customer behavior indicates higher churn risk")
+    return readable
+
 def generate_precautions(top_features):
+
     """
     Mapping risky SHAP Features to business actions
     """
